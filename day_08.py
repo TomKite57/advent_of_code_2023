@@ -30,6 +30,24 @@ def has_a_loop(history):
             return True
     return False
 
+# Define a function to calculate the greatest common divisor (GCD) using Euclidean algorithm
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+# Define a function to calculate the LCM using the GCD
+def lcm(*args):
+    if len(args) < 2:
+        raise ValueError("At least two arguments are required to calculate LCM.")
+
+    result = args[0]
+
+    for num in args[1:]:
+        result = (result * num) // gcd(result, num)
+
+    return result
+
 def follow_multiple_paths(instruc, graph):
     counter = 0
     paths = [pos for pos in graph.keys() if pos[-1]=="A"]
@@ -50,6 +68,21 @@ def follow_multiple_paths(instruc, graph):
             break
 
 
+    periods = []
+    for his in histories:
+        for (loc, instruc), times in his.items():
+            if len(times) > 1:
+                periods.append(times[1]-times[0])
+                break
+
+    first = []
+    # All histories have cycle now
+    for his in histories:
+        for (loc, instruc), times in his.items():
+            if loc[-1] == 'Z':
+                first.append(times[0])
+
+    return lcm(*periods)
 
 
 def main():
